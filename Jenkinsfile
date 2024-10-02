@@ -2,7 +2,7 @@ pipeline {
  	agent none
  	tools {
 		maven 'Maven 3.9.0' 
-		jdk 'Graal JDK 17' 
+		jdk 'Graal JDK 21' 
 	}
 	
 	environment {
@@ -37,6 +37,8 @@ pipeline {
 					 		  	sh 'mvn -U -Dbuild.mediaTypes=unixInstaller,unixArchive,linuxRPM,linuxDeb ' +
 					 		  	   '-Dbuild.projectProperties=$BUILD_PROPERTIES ' +
 					 		  	   '-Dinstall4j.disableSigning=true ' +
+					 		  	   '-Dbuild.buildIds=26,37,46,112 ' +
+					 		  	   '-Dbuild.gui.buildIds=25,37,116 ' +
 					 		  	   '-DbuildInstaller=true clean package'
 					 		  	
 					 		  	/* Stash installers */
@@ -76,6 +78,8 @@ pipeline {
 					 		  	sh 'mvn -U -Dbuild.mediaTypes=unixInstaller,unixArchive,linuxRPM,linuxDeb ' +
 					 		  	   '-Dbuild.projectProperties=$BUILD_PROPERTIES ' +
 					 		  	   '-Dinstall4j.disableSigning=true ' +
+					 		  	   '-Dbuild.buildIds=118,122,133,137 ' +
+					 		  	   '-Dbuild.gui.buildIds=138,145,151 ' +
 					 		  	   '-DbuildInstaller=true clean package'
 					 		  	
 					 		  	/* Stash installers */
@@ -156,6 +160,8 @@ pipeline {
 					 		  	sh 'mvn -X -U -Dbuild.mediaTypes=macos,macosFolder,macosFolderArchive ' +
 					 		  	   '-Dbuild.projectProperties=$BUILD_PROPERTIES ' +
 					 		  	   '-Dinstall4j.debug=true ' +
+					 		  	   '-Dbuild.buildIds=36 ' +
+					 		  	   '-Dbuild.gui.buildIds=36 ' +
 					 		  	   '-DbuildInstaller=true clean package'
 					 		  	
 					 		  	/* Stash installers */
@@ -196,19 +202,21 @@ pipeline {
 					 			// -Dinstall4j.disableNotarization=true 
 					 		  	sh 'mvn -X -U -Dbuild.mediaTypes=macos,macosFolder,macosFolderArchive ' +
 					 		  	   '-Dbuild.projectProperties=$BUILD_PROPERTIES ' +
+					 		  	   '-Dbuild.buildIds=118 ' +
+					 		  	   '-Dbuild.gui.buildIds=128 ' +
 					 		  	   '-Dinstall4j.debug=true ' +
 					 		  	   '-DbuildInstaller=true clean package'
 					 		  	
 					 		  	/* Stash installers */
-			        			stash includes: 'push-sftp/target/media/*', name: 'macos-aarc64-cli'
-			        			stash includes: 'push-sftp-gui/target/media/*', name: 'macos-aarc64-gui'
+			        			stash includes: 'push-sftp/target/media/*', name: 'macos-aarch64-cli'
+			        			stash includes: 'push-sftp-gui/target/media/*', name: 'macos-aarch64-gui'
 			        			
 			        			/* Stash updates.xml */
 			        			dir('push-sftp-gui/target/media') {
-									stash includes: 'updates.xml', name: 'macos-aarc64-gui-updates-xml'
+									stash includes: 'updates.xml', name: 'macos-aarch64-gui-updates-xml'
 			        			}
 			        			dir('push-sftp/target/media') {
-									stash includes: 'updates.xml', name: 'macos-aarc64-updates-xml'
+									stash includes: 'updates.xml', name: 'macos-aarch64-updates-xml'
 			        			}
 					 		}
         				}
@@ -258,23 +266,31 @@ pipeline {
     			dir('push-sftp-gui/target/media-linux-aarch64') {
 	 		  		unstash 'linux-aarch64-gui-updates-xml'
     			}
-	 		  	dir('push-sftp-gui/target/media-windows') {
-	 		  		unstash 'windows-gui-updates-xml'
-    			}
-	 		  	dir('push-sftp-gui/target/media-macos') {
-	 		  		unstash 'macos-gui-updates-xml'
-    			}
 	 		  	dir('push-sftp/target/media-linux') {
 	 		  		unstash 'linux-updates-xml'
     			}
 	 		  	dir('push-sftp/target/media-linux-aarch64') {
 	 		  		unstash 'linux-aarch64-updates-xml'
     			}
+    			
+	 		  	dir('push-sftp-gui/target/media-windows') {
+	 		  		unstash 'windows-gui-updates-xml'
+    			}
 	 		  	dir('push-sftp/target/media-windows') {
 	 		  		unstash 'windows-updates-xml'
     			}
+    			
+	 		  	dir('push-sftp-gui/target/media-macos') {
+	 		  		unstash 'macos-gui-updates-xml'
+    			}
 	 		  	dir('push-sftp/target/media-macos') {
 	 		  		unstash 'macos-updates-xml'
+    			}
+    			dir('push-sftp-gui/target/media-macos-aarch64') {
+	 		  		unstash 'macos-aarch64-gui-updates-xml'
+    			}
+	 		  	dir('push-sftp/target/media-macos-aarch64') {
+	 		  		unstash 'macos-aarch64-updates-xml'
     			}
     			
     			/* Merge all updates.xml into one */

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="10.0.8" transformSequenceNumber="10">
   <directoryPresets config="./target/dependencies" />
-  <application name="FileDrop" applicationId="1464-8895-9044-3070" mediaDir="target/media" mediaFilePattern="${compiler:sys.shortName}-${compiler:sys.platform}-${compiler:sys.version}" shortName="filedrop" publisher="JADAPTIVE Limited" publisherWeb="https://jadaptive.com" version="0.0.1" allPathsRelative="true" convertDotsToUnderscores="false" macVolumeId="ffee23fd2eeafa87" javaMinVersion="17">
+  <application name="FileDrop" applicationId="1464-8895-9044-3070" mediaDir="target/media" mediaFilePattern="${compiler:sys.shortName}-${compiler:sys.platform}-${compiler:sys.version}" shortName="filedrop" publisher="JADAPTIVE Limited" publisherWeb="https://jadaptive.com" version="0.0.1" allPathsRelative="true" convertDotsToUnderscores="false" macVolumeId="ffee23fd2eeafa87" javaMinVersion="21">
+    <searchSequence>
+      <directory location="jre" />
+    </searchSequence>
     <variables>
       <variable name="install4j.phase" value="continuous" description="The phase under which the updates.xml will be initially placed. Usually &quot;continuous&quot;" />
       <variable name="install4j.appleId" value="lee@sshtools.com" description="The apple ID to use for notarisation" />
@@ -12,6 +15,7 @@
       <variable name="install4j.updatesBase" value="http://localhost/${compiler:install4j.phase}/updates.xml" description="The base folder (on S3 usually) where updates are" />
       <variable name="install4j.jaulAppId" value="UNSET" description="The Jaul update system app Id, e.g. com.sshtools.MyApp" />
       <variable name="install4j.jaulUpdaterId" value="999" description="The ID (in this install4j project) of the updater application. Its a bit annoying we can't get this automatically!" />
+      <variable name="install4j.jaulBranches" description="Description" />
     </variables>
     <codeSigning macEnabled="true" macPkcs12File="${compiler:install4j.macPkcs12File}" windowsEnabled="true" windowsKeySource="windows" macNotarize="true" appleId="${compiler:install4j.appleId}">
       <windowsKeystoreIdentifier issuer="${compiler:install4j.windowsKeystoreIssuer}" serial="${compiler:install4j.windowsKeystoreSerial}" subject="${compiler:install4j.windowsKeystoreSubject}" />
@@ -39,9 +43,9 @@
       <mountPoint id="45" location="mac" />
       <mountPoint id="46" location="win" />
       <mountPoint id="47" location="linux" />
-      <mountPoint id="126" />
       <mountPoint id="131" location="linux-aarch64" />
       <mountPoint id="132" location="mac-aarch64" />
+      <mountPoint id="126" />
     </mountPoints>
     <entries>
       <fileEntry mountPoint="24" file="./target/push-sftp-gui.jar" />
@@ -49,13 +53,13 @@
       <dirEntry mountPoint="45" file="./target/dependencies/mac" subDirectory="mac" />
       <dirEntry mountPoint="46" file="./target/dependencies/win" subDirectory="win" />
       <dirEntry mountPoint="47" file="./target/dependencies/linux" subDirectory="linux" />
-      <fileEntry mountPoint="126" file="./src/main/resources/com/sshtools/pushsftp/jfx/icon.png" />
       <dirEntry mountPoint="131" file="./target/dependencies/linux-aarch64" subDirectory="linux" />
       <dirEntry mountPoint="132" file="./target/dependencies/mac-aarch64" subDirectory="mac" />
+      <fileEntry mountPoint="126" file="./src/main/resources/com/sshtools/pushsftp/jfx/icon.png" />
     </entries>
   </files>
   <launchers>
-    <launcher name="file-drop" id="52" menuName="FileDrop">
+    <launcher name="file-drop" id="52" menuName="FileDrop" useCustomMacosExecutableName="true" customMacosExecutableName="FileDrop">
       <executable name="file-drop" iconSet="true" stderrFile="~/.filedrop/filedrop.log" redirectStdout="true" stdoutFile="~/.filedrop/filedrop.log" executableMode="gui" changeWorkingDirectory="false" />
       <java mainClass="com.sshtools.pushsftp.jfx/com.sshtools.pushsftp.jfx.PushSFTPUI" mainMode="module" vmParameters="-Dinstall4j.installationDir=${installer:sys.installationDir}">
         <modulePath>
@@ -80,7 +84,7 @@
       </iconImageFiles>
     </launcher>
   </launchers>
-  <installerGui autoUpdateDescriptorUrl="https://sshtools-public.s3.eu-west-1.amazonaws.com/push-sftp-gui/${compiler:install4j.phase}/updates.xml" useAutoUpdateBaseUrl="true" autoUpdateBaseUrl="https://sshtools-public.s3.eu-west-1.amazonaws.com/push-sftp-gui/${compiler:sys.version}/">
+  <installerGui autoUpdateDescriptorUrl="${compiler:install4j.updatesBase}/${compiler:install4j.phase}/updates.xml" useAutoUpdateBaseUrl="true" autoUpdateBaseUrl="${compiler:install4j.updatesBase}/${compiler:sys.version}/">
     <customCode>
       <scanDirectory location="./target/dependencies/common" />
     </customCode>
@@ -1279,7 +1283,7 @@ return true;</property>
       </exclude>
       <jreBundle usePack200="false" />
     </macosFolder>
-    <linuxDeb name="Linux Deb Archive (Arm)" id="138" mediaFileName="${compiler:sys.shortName}-${compiler:sys.platform}-amd64-${compiler:sys.version}" architectureSet="true" architecture="aarch64">
+    <linuxDeb name="Linux Deb Archive (Arm)" id="138" mediaFileName="${compiler:sys.shortName}-${compiler:sys.platform}-aarch64-${compiler:sys.version}" architectureSet="true" architecture="aarch64">
       <exclude>
         <entry location="mac" />
         <entry location="win" />
